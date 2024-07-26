@@ -344,7 +344,15 @@ app.post("/myorders", async (req, res) => {
         //         [item.item_id, userData.user_id, item.name, item.price, item.quantity, item.payment, item.time, item.date, item.shop, item.shop_id, userData.first_name, userData.last_name, userData.enroll_id, item.imageUrl, item.completed, item.rejected]);
         // }));
 
-        
+        console.log(data);
+
+          if(data[0].payment === "counter")
+          {
+            res.redirect(`${process.env.CLIENT_URL}/PaymentSuccess?status=true`);
+          }
+          else{
+            console.log("in else part");
+          }
 
          io.emit('new_order'); // Emitting the event to the client
 
@@ -356,15 +364,7 @@ app.post("/myorders", async (req, res) => {
             console.log('user disconnected');
           });
           
-          console.log(data);
-
-          if(data[0].payment == "counter")
-          {
-            res.redirect(`${process.env.CLIENT_URL}/PaymentSuccess?status=true`);
-          }
-          else{
-            console.log("in else part");
-          }
+          
     });
 
     } catch (error) {
