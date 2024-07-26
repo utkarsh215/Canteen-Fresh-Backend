@@ -334,15 +334,15 @@ app.post("/myorders", async (req, res) => {
         const userData = req.body.user
         console.log(req.body.user)
 
-        // data.map(async (item) => {
-        //     const [result] = await db.query("INSERT INTO myorders(item_id,user_id,name,price,quantity,payment,time,date,shop,shop_id,first_name,last_name,enroll_id,image,completed,rejected) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
-        //         [item.item_id, userData.user_id, item.name, item.price, item.quantity, item.payment, item.time, item.date, item.shop,item.shop_id,userData.first_name,userData.last_name,userData.enroll_id,item.imageUrl,item.completed,item.rejected]);
-        // })
+        data.map(async (item) => {
+            const [result] = await db.query("INSERT INTO myorders(item_id,user_id,name,price,quantity,payment,time,date,shop,shop_id,first_name,last_name,enroll_id,image,completed,rejected) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+                [item.item_id, userData.user_id, item.name, item.price, item.quantity, item.payment, item.time, item.date, item.shop,item.shop_id,userData.first_name,userData.last_name,userData.enroll_id,item.imageUrl,item.completed,item.rejected]);
+        })
 
-        await Promise.all(data.map(async (item) => {
-            await db.query("INSERT INTO myorders(item_id,user_id,name,price,quantity,payment,time,date,shop,shop_id,first_name,last_name,enroll_id,image,completed,rejected) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
-                [item.item_id, userData.user_id, item.name, item.price, item.quantity, item.payment, item.time, item.date, item.shop, item.shop_id, userData.first_name, userData.last_name, userData.enroll_id, item.imageUrl, item.completed, item.rejected]);
-        }));
+        // await Promise.all(data.map(async (item) => {
+        //     await db.query("INSERT INTO myorders(item_id,user_id,name,price,quantity,payment,time,date,shop,shop_id,first_name,last_name,enroll_id,image,completed,rejected) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+        //         [item.item_id, userData.user_id, item.name, item.price, item.quantity, item.payment, item.time, item.date, item.shop, item.shop_id, userData.first_name, userData.last_name, userData.enroll_id, item.imageUrl, item.completed, item.rejected]);
+        // }));
 
         
 
