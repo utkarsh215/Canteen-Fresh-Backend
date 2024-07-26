@@ -356,9 +356,14 @@ app.post("/myorders", async (req, res) => {
             console.log('user disconnected');
           });
           
+          console.log("data");
+
           if(data[0].payment == "counter")
           {
             res.redirect(`${process.env.CLIENT_URL}/PaymentSuccess?status=${response.status}`);
+          }
+          else{
+            console.log("in else part");
           }
     });
 
