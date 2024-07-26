@@ -11,7 +11,7 @@ import { ExtractJwt as ExtractJwt } from 'passport-jwt';
 import session from "express-session";
 import {Server} from "socket.io";
 import instamojo from "./routes/instamojo.js";
-import sendEmail from"../Backend/utils/sendEmail.js"
+import sendEmail from"./utils/sendEmail.js"
 import crypto from "crypto"
 import mysql from"mysql2"
 
