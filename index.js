@@ -48,7 +48,7 @@ app.use(express.static("public"));
 app.use(passport.initialize());     //initializing passport
 // app.use(cors());
 app.use(cors({
-    origin: process.env.CLIENT_URL, // Allow this specific origin
+    origin: 'https://main--canteen-fresh.netlify.app', // Allow this specific origin
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization']
 }));
