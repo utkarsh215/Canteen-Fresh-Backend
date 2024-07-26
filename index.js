@@ -101,17 +101,17 @@ app.get("/verify_user", async(req,res)=>{
         console.log(user);
         if(result.length === 0)
         {
-            res.redirect(`${process.env.CLIENT_URL}/email_verify_failed`)
+            res.redirect(`https://main--canteen-fresh.netlify.app/email_verify_failed`)
         }
         else{
             if(req.query.token === user.token)
             {
                 await db.query("UPDATE users SET verified=?, token=? WHERE enroll_id=?",[true, "", req.query.id]);
-                res.redirect(`${process.env.CLIENT_URL}/email_verify_success`);
+                res.redirect(`https://main--canteen-fresh.netlify.app/email_verify_success`);
             }
             else{
 
-                res.redirect(`${process.env.CLIENT_URL}/email_verify_failed`)
+                res.redirect(`https://main--canteen-fresh.netlify.app/email_verify_failed`)
             }
         }
     } catch (error) {
