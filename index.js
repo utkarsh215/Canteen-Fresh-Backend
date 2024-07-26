@@ -349,7 +349,7 @@ app.post("/myorders", async (req, res) => {
           if(data[0].payment === "counter")
           {
               console.log("In if part")
-           return res.redirect(`${process.env.CLIENT_URL}/PaymentSuccess?status=true`);
+            res.redirect(`${process.env.CLIENT_URL}/PaymentSuccess?status=true`);
           }
           else{
             console.log("in else part");
