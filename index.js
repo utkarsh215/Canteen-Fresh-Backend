@@ -53,7 +53,12 @@ app.use(cors());
 //     allowedHeaders: ['Content-Type', 'Authorization']
 // }));
 app.use("/api",instamojo);
-const io = new Server(server,{ cors: {origin: [process.env.CLIENT_URL],} });
+const io = new Server(server, {
+    cors: {
+        origin: 'https://main--canteen-fresh.netlify.app',
+        methods: ["GET", "POST"]
+    }
+});
 app.use(session({
     secret: process.env.SESSION_KEY,
     resave: false,
@@ -333,12 +338,12 @@ app.delete("/edit_menu",async (req,res)=>{
 
 })
 
-// io.on('connection', (socket) => {
-//         console.log('a user connected');
-//         socket.on('disconnect', () => {
-//             console.log('user disconnected');
-//           });  
-//     });
+io.on('connection', (socket) => {
+        console.log('a user connected');
+        socket.on('disconnect', () => {
+            console.log('user disconnected');
+          });  
+    });
 
 app.post("/myorders", async (req, res) => {
     try {
@@ -358,17 +363,14 @@ app.post("/myorders", async (req, res) => {
               res.json({ redirectUrl: `${process.env.CLIENT_URL}/PaymentSuccess?status=true` });
           }
 
-        io.on('connection', (socket) => {
-        console.log('a user connected');
-        socket.on('disconnect', () => {
-            console.log('user disconnected');
-          });  
-        });
-
+        // io.on('connection', (socket) => {
+        // console.log('a user connected');
+        // socket.on('disconnect', () => {
+        //     console.log('user disconnected');
+        //   });  
+        // });
          io.emit('new_order'); // Emitting the event to the client
-
         
-
     } catch (error) {
         console.log(error.message);
     }
