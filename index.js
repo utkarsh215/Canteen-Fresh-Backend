@@ -333,12 +333,12 @@ app.delete("/edit_menu",async (req,res)=>{
 
 })
 
-io.on('connection', (socket) => {
-        console.log('a user connected');
-        socket.on('disconnect', () => {
-            console.log('user disconnected');
-          });  
-    });
+// io.on('connection', (socket) => {
+//         console.log('a user connected');
+//         socket.on('disconnect', () => {
+//             console.log('user disconnected');
+//           });  
+//     });
 
 app.post("/myorders", async (req, res) => {
     try {
@@ -357,7 +357,13 @@ app.post("/myorders", async (req, res) => {
             // res.redirect(`${process.env.CLIENT_URL}/PaymentSuccess?status=true`);
               res.json({ redirectUrl: `${process.env.CLIENT_URL}/PaymentSuccess?status=true` });
           }
-         
+
+        io.on('connection', (socket) => {
+        console.log('a user connected');
+        socket.on('disconnect', () => {
+            console.log('user disconnected');
+          });  
+        });
 
          io.emit('new_order'); // Emitting the event to the client
 
