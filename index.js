@@ -356,7 +356,7 @@ app.post("/myorders", async (req, res) => {
             console.log('user disconnected');
           });
           
-          console.log("data");
+          console.log(data);
 
           if(data[0].payment == "counter")
           {
