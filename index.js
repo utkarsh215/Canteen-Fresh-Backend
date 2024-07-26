@@ -46,7 +46,12 @@ app.use(express.json());        //to get data through json
 app.use(express.urlencoded({ extended: "true" }));     //to get data through url
 app.use(express.static("public"));
 app.use(passport.initialize());     //initializing passport
-app.use(cors());
+// app.use(cors());
+app.use(cors({
+    origin: process.env.CLIENT_URL, // Allow this specific origin
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
 app.use("/api",instamojo);
 const io = new Server(server,{ cors: {origin: [process.env.CLIENT_URL],} });
 app.use(session({
