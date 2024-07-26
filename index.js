@@ -84,7 +84,7 @@ app.post("/register", async (req, res) => {
                     [data.enroll_id.toUpperCase(), data.first_name.toLowerCase(), data.last_name.toLowerCase(), data.email, hash, false,false,token]);
                     
                     const url=`${process.env.BASE_URL}/verify_user?id=${data.enroll_id.toUpperCase()}&token=${token}`
-                    await sendEmail(req.body.email, "Canteen Fresh Email Verification" , url);
+                    await sendEmail(req.body.email, "Canteen Fresh Email Verification" , `Hi welcome to Canteen Fresh, follow this link to veritfy your email account and complete the registration- ${url}`);
                     res.send({message:"An email was sent to your Account, please Verify"});
             }
         });
