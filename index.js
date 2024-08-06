@@ -57,8 +57,8 @@ const menuSchema = new mongoose.Schema({
 const Menu = mongoose.model("menu",menuSchema);
 
 const myordersSchema = new mongoose.Schema({
-    item_id:{type:Number,required:true},
-    user_id:{type:Number,required:true},
+    item_id:{type:String,required:true},
+    user_id:{type:String,required:true},
     name:{type: String},
     price:{type:Number},
     quantity:{type:Number},
