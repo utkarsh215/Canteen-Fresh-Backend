@@ -50,7 +50,7 @@ const menuSchema = new mongoose.Schema({
     price:{type:Number},
     available:{type:Boolean},
     shop:{type:String},
-    shop_id:{type:Number},
+    shop_id:{type:String},
     image:{type:String}
 });
 
