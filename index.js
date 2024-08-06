@@ -66,7 +66,7 @@ const myordersSchema = new mongoose.Schema({
     time:{type:String},
     date:{type:String},
     shop:{type:String},
-    shop_id:{type:Number},
+    shop_id:{type:String},
     enroll_id:{type:String,required: true,unique:true},
     first_name:{type:String,required: true},
     last_name:{type:String,required: true},
@@ -408,7 +408,7 @@ app.post("/edit_menu",async (req,res)=>{
     const data=req.body;
     try {
         // const [result]=await db.query("UPDATE menu SET name=?, price=?, image=? WHERE item_id=?",[data.name,data.price,data.imageUrl,data.item_id])
-        const result = await Menu.updateOne({_id:data.item_id},{$set:{
+       await Menu.updateOne({_id:data.item_id},{$set:{
             name:data.name,
             price:data.price,
             image:data.imageUrl
