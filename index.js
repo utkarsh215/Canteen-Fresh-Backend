@@ -139,7 +139,7 @@ app.post("/register", async (req, res) => {
                 const token=crypto.randomBytes(32).toString("hex");
                 // const [response] = await db.query("INSERT INTO users (enroll_id, first_name, last_name, email, password, ismerchant, verified, token) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
                 //     [data.enroll_id.toUpperCase(), data.first_name.toLowerCase(), data.last_name.toLowerCase(), data.email, hash, false,false,token]);
-                    const result = await User.create({
+                    await User.create({
                     enroll_id:data.enroll_id.toUpperCase(),
                     first_name: data.first_name.toLowerCase(),
                     last_name: data.last_name.toLowerCase(),
