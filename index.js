@@ -299,7 +299,7 @@ app.get("/users",async(req,res)=>{
     let data=[];
     try {
         result.map((user)=>{
-            data.push({first_name:user.first_name,last_name:user.last_name,enroll_id:user.enroll_id,email:user.email,user_id:user._id.$oid,verified:user.verified});
+            data.push({first_name:user.first_name,last_name:user.last_name,enroll_id:user.enroll_id,email:user.email,user_id:user._id,verified:user.verified});
         });
         res.send(data);
     } catch (error) {
@@ -321,7 +321,7 @@ app.get("/all", passport.authenticate('jwt', { session: "false" }), async (req, 
         if(req.user.ismerchant)
         {
             res.send({
-                id:req.user.id,
+                id:req.user._id,
                 ismerchant:req.user.ismerchant,
                 shop:req.user.shop,
                 data:data
@@ -330,7 +330,7 @@ app.get("/all", passport.authenticate('jwt', { session: "false" }), async (req, 
         else
         {
             res.send({
-            user_id: req.user.user_id,
+            user_id: req.user._id,
             enroll_id: req.user.enroll_id,
             data: data
         });
@@ -368,7 +368,8 @@ app.post("/all",async (req,res)=>{
             name:data.name,
             price:data.price,
             available:data.available,
-            shop:data.shop_id,
+            shop:data.shop,
+            shop_id:data.shop_id,
             image:data.image
         });
         // res.send(result);
