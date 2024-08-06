@@ -496,7 +496,7 @@ app.post("/edit_myorders",async(req,res)=>{
     const completed=req.body.completed;
     try {
         // const [result]=await db.query("UPDATE myorders SET rejected=?, completed=? WHERE order_id=?",[rejected,completed,item.order_id]);
-        const result = await MyOrders.updateOne({order_id:item.order_id},{$set:{rejected:rejected, completed:completed}});
+        const result = await MyOrders.updateOne({_id:item.order_id},{$set:{rejected:rejected, completed:completed}});
         // res.send(result);
     } catch (error) {
         console.error(err);
@@ -509,7 +509,7 @@ app.get("/myorders",passport.authenticate('jwt', { session: "false" }), async (r
         const merchant=req.user;
         try {
             // const [result]=await db.query("SELECT * FROM myorders WHERE shop_id=? ORDER BY order_id DESC",[merchant.id]);
-            const result = await MyOrders.find({ shop_id: merchant.id }).sort({ order_id: -1 });
+            const result = await MyOrders.find({ shop_id: merchant.id }).sort({_id: -1 });
             let data=[];
             result.forEach((item)=>{
                 data.push({order_id:item.order_id , item_id:item.item_id , first_name:item.first_name, last_name:item.last_name, enroll_id:item.enroll_id , name:item.name , price:item.price , quantity:item.quantity , payment:item.payment ,imageUrl:item.image, time:item.time , date:item.date, completed:item.completed, rejected:item.rejected});
