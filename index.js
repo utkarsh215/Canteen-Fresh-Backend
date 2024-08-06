@@ -315,9 +315,8 @@ app.get("/all", passport.authenticate('jwt', { session: "false" }), async (req, 
         let data = [];
         result.forEach(item => {
             if (item.available == true) {
-                data.push({ item_id: item._id.$oid, name: item.name, price: item.price, shop: item.shop,shop_id:item.shop_id,imageUrl : item.image });
+                data.push({ item_id: item._id, name: item.name, price: item.price, shop: item.shop,shop_id:item.shop_id,imageUrl : item.image });
             }
-
         });
         if(req.user.ismerchant)
         {
@@ -349,7 +348,7 @@ app.get("/menu_home",async(req,res)=>{
         let data = [];
         result.forEach(item => {
             if (item.available == true) {
-                data.push({ item_id: item._id.$oid, name: item.name, price: item.price, shop: item.shop,shop_id:item.shop_id,imageUrl : item.image });
+                data.push({ item_id: item._id, name: item.name, price: item.price, shop: item.shop,shop_id:item.shop_id,imageUrl : item.image });
             }
         });
         res.send(data);
@@ -408,7 +407,7 @@ app.post("/edit_menu",async (req,res)=>{
     const data=req.body;
     try {
         // const [result]=await db.query("UPDATE menu SET name=?, price=?, image=? WHERE item_id=?",[data.name,data.price,data.imageUrl,data.item_id])
-        const result = await Menu.updateOne({item_id:data.item_id},{$set:{
+        const result = await Menu.updateOne({_id:data.item_id},{$set:{
             name:data.name,
             price:data.price,
             image:data.imageUrl
@@ -425,7 +424,7 @@ app.delete("/edit_menu",async (req,res)=>{
     const data=req.body.source;
     try {
         // await db.query("DELETE FROM menu WHERE item_id=?",[data.item_id])
-         await Menu.deleteOne({item_id:data.item_id})
+         await Menu.deleteOne({_id:data.item_id})
     } catch (error) {
         console.error(error);
     }
