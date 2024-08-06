@@ -67,7 +67,7 @@ const myordersSchema = new mongoose.Schema({
     date:{type:String},
     shop:{type:String},
     shop_id:{type:String},
-    enroll_id:{type:String,required: true,unique:true},
+    enroll_id:{type:String,required: true},
     first_name:{type:String,required: true},
     last_name:{type:String,required: true},
     image:{type:String},
