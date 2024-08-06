@@ -105,9 +105,18 @@ app.post("/register", async (req, res) => {
             }
             else {
                 const token=crypto.randomBytes(32).toString("hex");
-                const [response] = await db.query("INSERT INTO users (enroll_id, first_name, last_name, email, password, ismerchant, verified, token) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-                    [data.enroll_id.toUpperCase(), data.first_name.toLowerCase(), data.last_name.toLowerCase(), data.email, hash, false,false,token]);
-                    
+                // const [response] = await db.query("INSERT INTO users (enroll_id, first_name, last_name, email, password, ismerchant, verified, token) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                //     [data.enroll_id.toUpperCase(), data.first_name.toLowerCase(), data.last_name.toLowerCase(), data.email, hash, false,false,token]);
+                    const result = await User.create({
+                    enroll_id:data.enroll_id.toUpperCase(),
+                    first_name: data.first_name.toLowerCase(),
+                    last_name: data.last_name.toLowerCase(),
+                    email:data.email,
+                    password:hash,
+                    ismerchant:false,
+                    verified:false,
+                    token:token
+                }); 
                     const url=`${process.env.BASE_URL}/verify_user?id=${data.enroll_id.toUpperCase()}&token=${token}`
                     await sendEmail(req.body.email, "Canteen Fresh Email Verification" , `Hi welcome to Canteen Fresh, follow this link to veritfy your email account and complete the registration- ${url}`);
                     res.send({message:"An email was sent to your Account, please Verify"});
@@ -121,7 +130,8 @@ app.post("/register", async (req, res) => {
 
 app.get("/verify_user", async(req,res)=>{
     try {
-        const [result]=await db.query("SELECT * FROM users WHERE enroll_id = ?",[req.query.id]);
+        // const [result]=await db.query("SELECT * FROM users WHERE enroll_id = ?",[req.query.id]);
+        const result = await User.find({enroll_id: req.query.id});
         const user=result[0];
         console.log(user);
         if(result.length === 0)
@@ -131,7 +141,8 @@ app.get("/verify_user", async(req,res)=>{
         else{
             if(req.query.token === user.token)
             {
-                await db.query("UPDATE users SET verified=?, token=? WHERE enroll_id=?",[true, "", req.query.id]);
+                // await db.query("UPDATE users SET verified=?, token=? WHERE enroll_id=?",[true, "", req.query.id]);
+                await User.updateOne({enroll_id:req.query.id},{$set:{ verified:true, token:""}});
                 res.redirect(`https://main--canteen-fresh.netlify.app/email_verify_success`);
             }
             else{
@@ -155,9 +166,17 @@ app.post("/updateUser",async(req,res)=>{
             }
             else {
                 const token=crypto.randomBytes(32).toString("hex");
-                const [response] = await db.query("UPDATE users SET enroll_id=?, first_name=?, last_name=?, email=?, password=?, ismerchant=?, verified=?, token=? WHERE enroll_id=?",
-                    [data.enroll_id.toUpperCase(), data.first_name.toLowerCase(), data.last_name.toLowerCase(), data.email, hash, false,false,token,data.enroll_id.toUpperCase()]);
-                    
+                // const [response] = await db.query("UPDATE users SET enroll_id=?, first_name=?, last_name=?, email=?, password=?, ismerchant=?, verified=?, token=? WHERE enroll_id=?",
+                //     [data.enroll_id.toUpperCase(), data.first_name.toLowerCase(), data.last_name.toLowerCase(), data.email, hash, false,false,token,data.enroll_id.toUpperCase()]);
+                    User.updateOne({enroll_id:data.enroll_id.toUpperCase()},{$set:{
+                    first_name: data.first_name.toLowerCase(),
+                    last_name: data.last_name.toLowerCase(),
+                    email:data.email,
+                    password:hash,
+                    ismerchant:false,
+                    verified:false,
+                    token:token
+                    }});
                     const url=`${process.env.BASE_URL}/verify_user?id=${data.enroll_id.toUpperCase()}&token=${token}`
                     await sendEmail(req.body.email, "Canteen Fresh Email Verification" , `Hi, Welcome to Canteen Fresh, Follow the link to verify your email account- ${url}`);
                     res.send({message:"An email was sent to your Account, please Verify"});
@@ -172,7 +191,8 @@ app.post("/updateUser",async(req,res)=>{
 app.post("/login", async (req, res) => {
     try {
         const data = req.body;
-        const [result] = await db.query("SELECT * FROM users WHERE enroll_id = ?", [data.enroll_id.toUpperCase()]);
+        // const [result] = await db.query("SELECT * FROM users WHERE enroll_id = ?", [data.enroll_id.toUpperCase()]);
+        const result = await User.find({enroll_id:data.enroll_id.toUpperCase()});
         if (result.length > 0) {
             console.log(result[0])
             if(result[0].verified)
@@ -242,11 +262,12 @@ app.get('/isAuthenticated', (req, res, next) => {
 //for getting all the items in the menu
 
 app.get("/users",async(req,res)=>{
-    const [result]=await db.query("SELECT * FROM users");
+    // const [result]=await db.query("SELECT * FROM users");
+    const result = await User.find({});
     let data=[];
     try {
         result.map((user)=>{
-            data.push({first_name:user.first_name,last_name:user.last_name,enroll_id:user.enroll_id,email:user.email,user_id:user.user_id,verified:user.verified});
+            data.push({first_name:user.first_name,last_name:user.last_name,enroll_id:user.enroll_id,email:user.email,user_id:user._id,verified:user.verified});
         });
         res.send(data);
     } catch (error) {
@@ -257,11 +278,12 @@ app.get("/users",async(req,res)=>{
 
 app.get("/all", passport.authenticate('jwt', { session: "false" }), async (req, res) => {
     try {
-        const [result] = await db.query("SELECT * FROM menu");
+        // const [result] = await db.query("SELECT * FROM menu");
+        const result = await Menu.find({});
         let data = [];
         result.forEach(item => {
             if (item.available == true) {
-                data.push({ item_id: item.item_id, name: item.name, price: item.price, shop: item.shop,shop_id:item.shop_id,imageUrl : item.image });
+                data.push({ item_id: item._id, name: item.name, price: item.price, shop: item.shop,shop_id:item.shop_id,imageUrl : item.image });
             }
 
         });
@@ -290,11 +312,12 @@ app.get("/all", passport.authenticate('jwt', { session: "false" }), async (req, 
 
 app.get("/menu_home",async(req,res)=>{
     try {
-        const [result] = await db.query("SELECT * FROM menu ORDER BY RAND() LIMIT 4;");
+        // const [result] = await db.query("SELECT * FROM menu ORDER BY RAND() LIMIT 4;");
+        const result = await Menu.aggregate([{ $sample: { size: 4 } }]);
         let data = [];
         result.forEach(item => {
             if (item.available == true) {
-                data.push({ item_id: item.item_id, name: item.name, price: item.price, shop: item.shop,shop_id:item.shop_id,imageUrl : item.image });
+                data.push({ item_id: item._id, name: item.name, price: item.price, shop: item.shop,shop_id:item.shop_id,imageUrl : item.image });
             }
         });
         res.send(data);
@@ -309,6 +332,14 @@ app.post("/all",async (req,res)=>{
     try {
         const [result] = await db.query("INSERT INTO menu(name, price, available, shop, shop_id, image) VALUES(?,?,?,?,?,?)",
         [data.name,data.price,data.available,data.shop,data.shop_id,data.image]);
+
+        await Menu.create({
+            name:data.name,
+            price:data.price,
+            available:data.available,
+            shop:data.shop_id,
+            image:data.image
+        });
         // res.send(result);
     } catch (error) {
         console.log(error);
