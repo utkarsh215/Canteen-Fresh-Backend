@@ -14,14 +14,7 @@ import instamojo from "./routes/instamojo.js";
 import sendEmail from"./utils/sendEmail.js"
 import crypto from "crypto"
 import mysql from"mysql2"
-
-// const db = new pg.Client({
-//     user: process.env.DB_USER,
-//     password: process.env.DB_PASSWORD,
-//     database: process.env.DB_DATABASE,
-//     host: process.env.DB_HOST,
-//     port: process.env.DB_PORT
-// })
+import mongoose from "mongoose";
 
 const db=mysql.createPool({
     host: process.env.DB_HOST,
@@ -30,6 +23,38 @@ const db=mysql.createPool({
     database: process.env.DB_DATABASE,
     user: process.env.DB_USER
 }).promise();
+
+//mongo connection
+
+const DB = "mongodb+srv://utkarsh_215:319be2a7@webdevdb.biedauh.mongodb.net/canteenFresh?retryWrites=true&w=majority&appName=webDevDB";
+mongoose.connect(DB)
+.then(()=>{console.log("DB Connected")})
+.catch((err) =>{console.log("DB Disconnected ",err)});
+
+//schema
+const userSchema=new mongoose.Schema({
+    enroll_id:{type:String,required: true,unique:true},
+    first_name:{type:String,required: true},
+    last_name:{type:String,required: true},
+    email:{type:String,required: true},
+    password:{type:String,required: true},
+    ismerchant:{type:Boolean,required: true},
+    verified:{type:Boolean,required:true},
+    token:{type:String}
+});
+
+const User= mongoose.model("users",userSchema);
+
+const menuSchema = new mongoose.Schema({
+    name:{type: String},
+    price:{type:Number},
+    available:{type:Boolean},
+    shop:{type:String},
+    shop_id:{type:Number},
+    image:{type:String}
+});
+
+const Menu = mongoose.model("menu",menuSchema);
 
 
 // db.connect();
