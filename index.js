@@ -450,7 +450,7 @@ app.post("/myorders", async (req, res) => {
 
             const result = await MyOrders.create({
                 item_id:item.item_id,
-                user_id:userData.user_id,
+                user_id:userData._id,
                 name:item.name,
                 price:item.price,
                 quantity:item.quantity,
