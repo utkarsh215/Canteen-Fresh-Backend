@@ -56,6 +56,38 @@ const menuSchema = new mongoose.Schema({
 
 const Menu = mongoose.model("menu",menuSchema);
 
+const myordersSchema = new mongoose.Schema({
+    item_id:{type:Number,required:true},
+    user_id:{type:Number,required:true},
+    name:{type: String},
+    price:{type:Number},
+    quantity:{type:Number},
+    payment:{type:String},
+    time:{type:String},
+    date:{type:String},
+    shop:{type:String},
+    shop_id:{type:Number},
+    enroll_id:{type:String,required: true,unique:true},
+    first_name:{type:String,required: true},
+    last_name:{type:String,required: true},
+    image:{type:String},
+    completed:{type:Boolean},
+    rejected:{type:Boolean}
+});
+
+const MyOrders = mongoose.model("myorders",myordersSchema);
+
+const merchantSchema = new mongoose.Schema({
+    first_name:{type:String,required: true},
+    last_name:{type:String,required: true},
+    shop:{type:String},
+    phone_num:{type:Number},
+    pay_num:{type:Number},
+    email:{type:String},
+    password:{type:String},
+    ismerchant:{type:Boolean}
+});
+const Merchant = mongoose.model("merchant",merchantSchema);
 
 // db.connect();
 
@@ -267,7 +299,7 @@ app.get("/users",async(req,res)=>{
     let data=[];
     try {
         result.map((user)=>{
-            data.push({first_name:user.first_name,last_name:user.last_name,enroll_id:user.enroll_id,email:user.email,user_id:user._id,verified:user.verified});
+            data.push({first_name:user.first_name,last_name:user.last_name,enroll_id:user.enroll_id,email:user.email,user_id:user._id.$oid,verified:user.verified});
         });
         res.send(data);
     } catch (error) {
@@ -283,7 +315,7 @@ app.get("/all", passport.authenticate('jwt', { session: "false" }), async (req, 
         let data = [];
         result.forEach(item => {
             if (item.available == true) {
-                data.push({ item_id: item._id, name: item.name, price: item.price, shop: item.shop,shop_id:item.shop_id,imageUrl : item.image });
+                data.push({ item_id: item._id.$oid, name: item.name, price: item.price, shop: item.shop,shop_id:item.shop_id,imageUrl : item.image });
             }
 
         });
@@ -317,7 +349,7 @@ app.get("/menu_home",async(req,res)=>{
         let data = [];
         result.forEach(item => {
             if (item.available == true) {
-                data.push({ item_id: item._id, name: item.name, price: item.price, shop: item.shop,shop_id:item.shop_id,imageUrl : item.image });
+                data.push({ item_id: item._id.$oid, name: item.name, price: item.price, shop: item.shop,shop_id:item.shop_id,imageUrl : item.image });
             }
         });
         res.send(data);
@@ -330,8 +362,8 @@ app.post("/all",async (req,res)=>{
     console.log(req.body);
     const data=req.body;
     try {
-        const [result] = await db.query("INSERT INTO menu(name, price, available, shop, shop_id, image) VALUES(?,?,?,?,?,?)",
-        [data.name,data.price,data.available,data.shop,data.shop_id,data.image]);
+        // const [result] = await db.query("INSERT INTO menu(name, price, available, shop, shop_id, image) VALUES(?,?,?,?,?,?)",
+        // [data.name,data.price,data.available,data.shop,data.shop_id,data.image]);
 
         await Menu.create({
             name:data.name,
@@ -375,7 +407,12 @@ app.post("/edit_menu",async (req,res)=>{
     console.log(req.body);
     const data=req.body;
     try {
-        const [result]=await db.query("UPDATE menu SET name=?, price=?, image=? WHERE item_id=?",[data.name,data.price,data.imageUrl,data.item_id])
+        // const [result]=await db.query("UPDATE menu SET name=?, price=?, image=? WHERE item_id=?",[data.name,data.price,data.imageUrl,data.item_id])
+        const result = await Menu.updateOne({item_id:data.item_id},{$set:{
+            name:data.name,
+            price:data.price,
+            image:data.imageUrl
+        }})
         // res.send(result);
     } catch (error) {
         console.error(error);
@@ -387,7 +424,8 @@ app.delete("/edit_menu",async (req,res)=>{
     console.log(req.body.source);
     const data=req.body.source;
     try {
-        await db.query("DELETE FROM menu WHERE item_id=?",[data.item_id])
+        // await db.query("DELETE FROM menu WHERE item_id=?",[data.item_id])
+         await Menu.deleteOne({item_id:data.item_id})
     } catch (error) {
         console.error(error);
     }
@@ -407,8 +445,28 @@ app.post("/myorders", async (req, res) => {
         const userData = req.body.user
         console.log(req.body.user)
         await Promise.all(data.map(async (item) => {
-            await db.query("INSERT INTO myorders(item_id,user_id,name,price,quantity,payment,time,date,shop,shop_id,first_name,last_name,enroll_id,image,completed,rejected) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
-                [item.item_id, userData.user_id, item.name, item.price, item.quantity, item.payment, item.time, item.date, item.shop, item.shop_id, userData.first_name, userData.last_name, userData.enroll_id, item.imageUrl, item.completed, item.rejected]);
+            // await db.query("INSERT INTO myorders(item_id,user_id,name,price,quantity,payment,time,date,shop,shop_id,first_name,last_name,enroll_id,image,completed,rejected) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+            //     [item.item_id, userData.user_id, item.name, item.price, item.quantity, item.payment, item.time, item.date, item.shop, item.shop_id, userData.first_name, userData.last_name, userData.enroll_id, item.imageUrl, item.completed, item.rejected]);
+
+            const result = await MyOrders.create({
+                item_id:item.item_id,
+                user_id:userData.user_id,
+                name:item.name,
+                price:item.price,
+                quantity:item.quantity,
+                payment:item.payment,
+                time:item.time,
+                date:item.date,
+                shop:item.shop,
+                shop_id:item.shop_id,
+                first_name:userData.first_name,
+                last_name:userData.last_name,
+                enroll_id:userData.enroll_id,
+                image:item.imageUrl,
+                completed:item.completed,
+                rejected:item.rejected
+            })
+            
         }));
         console.log(data);
 
@@ -437,7 +495,8 @@ app.post("/edit_myorders",async(req,res)=>{
     const rejected=req.body.rejected;
     const completed=req.body.completed;
     try {
-        const [result]=await db.query("UPDATE myorders SET rejected=?, completed=? WHERE order_id=?",[rejected,completed,item.order_id]);
+        // const [result]=await db.query("UPDATE myorders SET rejected=?, completed=? WHERE order_id=?",[rejected,completed,item.order_id]);
+        const result = await MyOrders.updateOne({order_id:item.order_id},{$set:{rejected:rejected, completed:completed}});
         // res.send(result);
     } catch (error) {
         console.error(err);
@@ -449,7 +508,8 @@ app.get("/myorders",passport.authenticate('jwt', { session: "false" }), async (r
     if(req.user.ismerchant){
         const merchant=req.user;
         try {
-            const [result]=await db.query("SELECT * FROM myorders WHERE shop_id=? ORDER BY order_id DESC",[merchant.id]);
+            // const [result]=await db.query("SELECT * FROM myorders WHERE shop_id=? ORDER BY order_id DESC",[merchant.id]);
+            const result = await MyOrders.find({ shop_id: merchant.id }).sort({ order_id: -1 });
             let data=[];
             result.forEach((item)=>{
                 data.push({order_id:item.order_id , item_id:item.item_id , first_name:item.first_name, last_name:item.last_name, enroll_id:item.enroll_id , name:item.name , price:item.price , quantity:item.quantity , payment:item.payment ,imageUrl:item.image, time:item.time , date:item.date, completed:item.completed, rejected:item.rejected});
@@ -462,7 +522,8 @@ app.get("/myorders",passport.authenticate('jwt', { session: "false" }), async (r
     else{
         const user=req.user;
         try {
-            const [result]=await db.query("SELECT * FROM myorders WHERE user_id=? ORDER BY order_id DESC",[user.user_id]);
+            // const [result]=await db.query("SELECT * FROM myorders WHERE user_id=? ORDER BY order_id DESC",[user.user_id]);
+            const result = await MyOrders.find({ user_id: user.user_id }).sort({ order_id: -1 });
             let data=[];
             result.forEach((item)=>{
                 data.push({order_id:item.order_id , item_id:item.item_id , first_name:item.first_name, last_name:item.last_name, enroll_id:item.enroll_id , name:item.name , price:item.price , quantity:item.quantity ,imageUrl:item.image, payment:item.payment , time:item.time , date:item.date, completed:item.completed, rejected:item.rejected});
@@ -487,10 +548,12 @@ passport.use(new JwtStrategy(opts, async function (jwt_payload, cb) {
     try {
         let result;
         if (jwt_payload.type === "user") {
-            [result] = await db.query("SELECT * FROM users WHERE enroll_id=?", [jwt_payload.enroll_id]);
+            // [result] = await db.query("SELECT * FROM users WHERE enroll_id=?", [jwt_payload.enroll_id]);
+            result = await User.find({enroll_id:jwt_payload.enroll_id});
         }
         else {
-            [result] = await db.query("SELECT * FROM merchant WHERE id=?", [jwt_payload.id]);
+            // [result] = await db.query("SELECT * FROM merchant WHERE id=?", [jwt_payload.id]);
+            result = await Merchant.find({id:jwt_payload.id});
         }
         if (result) {
             return cb(null, result[0]);
