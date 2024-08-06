@@ -523,7 +523,7 @@ app.get("/myorders",passport.authenticate('jwt', { session: "false" }), async (r
         const user=req.user;
         try {
             // const [result]=await db.query("SELECT * FROM myorders WHERE user_id=? ORDER BY order_id DESC",[user.user_id]);
-            const result = await MyOrders.find({ user_id: user.user_id }).sort({ order_id: -1 });
+            const result = await MyOrders.find({ user_id: user._id }).sort({_id: -1 });
             let data=[];
             result.forEach((item)=>{
                 data.push({order_id:item.order_id , item_id:item.item_id , first_name:item.first_name, last_name:item.last_name, enroll_id:item.enroll_id , name:item.name , price:item.price , quantity:item.quantity ,imageUrl:item.image, payment:item.payment , time:item.time , date:item.date, completed:item.completed, rejected:item.rejected});
