@@ -576,8 +576,16 @@ app.post("/m_register", async (req, res) => {
                 console.error("Error hasing password !", err);
             }
             else {
-                const [response] = await db.query("INSERT INTO merchant(first_name,last_name, shop, phone_num, pay_num, email, password, ismerchant) VALUES(?, ?, ?, ?, ?, ?, ?,true)",
-                    [data.first_name.toLowerCase(), data.last_name.toLowerCase(), data.shop.toLowerCase(), data.phone_num, data.pay_num, data.email, hash]);
+                // const [response] = await db.query("INSERT INTO merchant(first_name,last_name, shop, phone_num, pay_num, email, password, ismerchant) VALUES(?, ?, ?, ?, ?, ?, ?,true)",
+                //     [data.first_name.toLowerCase(), data.last_name.toLowerCase(), data.shop.toLowerCase(), data.phone_num, data.pay_num, data.email, hash]);
+                Merchant.create({
+                        first_name:data.first_name.toLowerCase(),
+                        last_name:data.last_name.toLowerCase(),
+                        shop:data.shop.toLowerCase(),
+                        phone_num:data.phone_num,
+                        pay_num:data.pay_num,
+                        password:hash
+                    })
                 // res.json(response.rows[0]);
             }
         });
@@ -591,9 +599,10 @@ app.post("/m_register", async (req, res) => {
 app.post("/m_login", async (req, res) => {
     try {
         const data = req.body;
-        const [result] = await db.query("SELECT * FROM merchant WHERE email = ?", [data.email]);
+        // const [result] = await db.query("SELECT * FROM merchant WHERE email = ?", [data.email]);
+        const result = await Merchant.find({email:data.email});
         if (result.length > 0) {
-            const id=result[0].id;
+            const id=result[0]._id.$oid;
             const savedHash = result[0].password;
             const currPassword = data.password;
             bcrypt.compare(currPassword, savedHash, (err, result) => {
@@ -627,9 +636,10 @@ app.post("/m_login", async (req, res) => {
 app.get("/merchant",async(req,res)=>{
     try {
         let data=[]
-        const [result]=await db.query("SELECT * FROM merchant");
+        // const [result]=await db.query("SELECT * FROM merchant");
+        const result = await Merchant.find({});
         result.map((item)=>{
-            data.push({id:item.id,first_name:item.first_name,last_name:item.last_name,shop:item.shop,phone_num:item.phone_num,pay_num:item.pay_num,email:item.email,ismerchant:item.ismerchant})
+            data.push({id:item._id.$oid,first_name:item.first_name,last_name:item.last_name,shop:item.shop,phone_num:item.phone_num,pay_num:item.pay_num,email:item.email,ismerchant:item.ismerchant})
         })
         res.send(data);
     } catch (error) {
