@@ -9,7 +9,7 @@ import passport from "passport";
 import { Strategy as JwtStrategy } from 'passport-jwt';
 import { ExtractJwt as ExtractJwt } from 'passport-jwt';
 import session from "express-session";
-import {Server} from "socket.io";
+import socketIo from "socket.io";
 import instamojo from "./routes/instamojo.js";
 import sendEmail from"./utils/sendEmail.js"
 import crypto from "crypto"
@@ -104,22 +104,23 @@ app.use(express.urlencoded({ extended: "true" }));     //to get data through url
 app.use(express.static("public"));
 app.use(passport.initialize());     //initializing passport
 // app.use(cors());
+
+const io = socketIo(server, {
+  cors: {
+    origin: "https://main--canteen-fresh.netlify.app",
+    methods: ["GET", "POST"]
+  }
+});
+
 app.use(cors({
     origin: 'https://main--canteen-fresh.netlify.app', // Allow this specific origin
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization']
 }));
 app.use("/api",instamojo);
-// const io = new Server(server, {
-//     cors: {
-//         origin: 'https://main--canteen-fresh.netlify.app'
-//     }
-// });
-const io = new Server(server,{ cors: {
-    origin: 'https://main--canteen-fresh.netlify.app', // Allow this specific origin
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization']
-}});
+
+
+
 app.use(session({
     secret: process.env.SESSION_KEY,
     resave: false,
@@ -395,15 +396,6 @@ app.post("/all",async (req,res)=>{
 //   io.emit('new_order', payload); // Emitting the event to the client
 // });
 
-// // Socket.io connection
-io.on('connection', (socket) => {
-    console.log('a user connected');
-
-
-    socket.on('disconnect', () => {
-        console.log('user disconnected');
-      });
-});
 
 
 //edit menu
@@ -435,6 +427,20 @@ app.delete("/edit_menu",async (req,res)=>{
     }
 
 })
+
+// Listen for incoming connections from clients
+io.on('connection', (socket) => {
+  console.log('A user connected');
+
+  // Handle disconnection
+  socket.on('disconnect', () => {
+    console.log('A user disconnected');
+  });
+});
+
+const notifyFrontend = (message) => {
+  io.emit('new_order', message);
+};
 
 app.post("/myorders", async (req, res) => {
     try {
@@ -480,7 +486,8 @@ app.post("/myorders", async (req, res) => {
         //     console.log('user disconnected');
         //   });  
         // });
-         io.emit('new_order',""); // Emitting the event to the client
+
+        notifyFrontend('new order is inserted');
         
     } catch (error) {
         console.log(error.message);
