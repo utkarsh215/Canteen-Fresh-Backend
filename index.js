@@ -105,7 +105,7 @@ app.use(express.static("public"));
 app.use(passport.initialize());     //initializing passport
 // app.use(cors());
 
-const io = Server(server, {
+const io =new Server(server, {
   cors: {
     origin: "https://main--canteen-fresh.netlify.app",
     methods: ["GET", "POST"]
