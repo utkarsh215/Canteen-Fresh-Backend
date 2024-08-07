@@ -105,12 +105,7 @@ app.use(express.static("public"));
 app.use(passport.initialize());     //initializing passport
 // app.use(cors());
 
-const io =new Server(server, {
-  cors: {
-    origin: "https://main--canteen-fresh.netlify.app",
-    methods: ["GET", "POST"]
-  }
-});
+
 
 app.use(cors({
     origin: 'https://main--canteen-fresh.netlify.app', // Allow this specific origin
@@ -119,7 +114,12 @@ app.use(cors({
 }));
 app.use("/api",instamojo);
 
-
+const io =new Server(server, {
+  cors: {
+    origin: "https://main--canteen-fresh.netlify.app",
+    methods: ["GET", "POST"]
+  }
+});
 
 app.use(session({
     secret: process.env.SESSION_KEY,
