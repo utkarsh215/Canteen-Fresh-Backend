@@ -496,7 +496,7 @@ app.post("/edit_myorders",async(req,res)=>{
     const completed=req.body.completed;
     try {
         // const [result]=await db.query("UPDATE myorders SET rejected=?, completed=? WHERE order_id=?",[rejected,completed,item.order_id]);
-        const result = await MyOrders.updateOne({_id:item.order_id},{$set:{rejected:rejected, completed:completed}});
+        await MyOrders.updateOne({_id:item.order_id},{$set:{rejected:rejected, completed:completed}});
         // res.send(result);
     } catch (error) {
         console.error(err);
