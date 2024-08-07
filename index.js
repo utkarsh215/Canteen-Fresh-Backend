@@ -315,7 +315,7 @@ app.get("/all", passport.authenticate('jwt', { session: "false" }), async (req, 
         let data = [];
         result.forEach(item => {
             if (item.available == true) {
-                data.push({ item_id: item._id, name: item.name, price: item.price, shop: item.shop,shop_id:item.shop_id,imageUrl : item.image });
+                data.push({ order_id: item._id, name: item.name, price: item.price, shop: item.shop,shop_id:item.shop_id,imageUrl : item.image });
             }
         });
         if(req.user.ismerchant)
