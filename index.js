@@ -392,14 +392,14 @@ app.post("/all",async (req,res)=>{
 // });
 
 // // Socket.io connection
-// io.on('connection', (socket) => {
-//     console.log('a user connected');
+io.on('connection', (socket) => {
+    console.log('a user connected');
 
 
-//     socket.on('disconnect', () => {
-//         console.log('user disconnected');
-//       });
-// });
+    socket.on('disconnect', () => {
+        console.log('user disconnected');
+      });
+});
 
 
 //edit menu
@@ -431,13 +431,6 @@ app.delete("/edit_menu",async (req,res)=>{
     }
 
 })
-
-io.on('connection', (socket) => {
-        console.log('a user connected');
-        socket.on('disconnect', () => {
-            console.log('user disconnected');
-          });  
-    });
 
 app.post("/myorders", async (req, res) => {
     try {
@@ -483,7 +476,7 @@ app.post("/myorders", async (req, res) => {
         //     console.log('user disconnected');
         //   });  
         // });
-         io.emit('new_order'); // Emitting the event to the client
+         io.emit('new_order',""); // Emitting the event to the client
         
     } catch (error) {
         console.log(error.message);
