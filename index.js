@@ -9,7 +9,7 @@ import passport from "passport";
 import { Strategy as JwtStrategy } from 'passport-jwt';
 import { ExtractJwt as ExtractJwt } from 'passport-jwt';
 import session from "express-session";
-import socketIo from "socket.io";
+import {Server} from "socket.io";
 import instamojo from "./routes/instamojo.js";
 import sendEmail from"./utils/sendEmail.js"
 import crypto from "crypto"
@@ -105,7 +105,7 @@ app.use(express.static("public"));
 app.use(passport.initialize());     //initializing passport
 // app.use(cors());
 
-const io = socketIo(server, {
+const io = Server(server, {
   cors: {
     origin: "https://main--canteen-fresh.netlify.app",
     methods: ["GET", "POST"]
