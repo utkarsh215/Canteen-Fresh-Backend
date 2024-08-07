@@ -110,12 +110,12 @@ app.use(cors({
     allowedHeaders: ['Content-Type', 'Authorization']
 }));
 app.use("/api",instamojo);
-const io = new Server(server, {
-    cors: {
-        origin: 'https://main--canteen-fresh.netlify.app',
-        methods: ["GET", "POST"]
-    }
-});
+// const io = new Server(server, {
+//     cors: {
+//         origin: 'https://main--canteen-fresh.netlify.app'
+//     }
+// });
+const io = new Server(server,{ cors: {origin: ["https://main--canteen-fresh.netlify.app"],} });
 app.use(session({
     secret: process.env.SESSION_KEY,
     resave: false,
