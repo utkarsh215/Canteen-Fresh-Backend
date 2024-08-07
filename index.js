@@ -115,7 +115,11 @@ app.use("/api",instamojo);
 //         origin: 'https://main--canteen-fresh.netlify.app'
 //     }
 // });
-const io = new Server(server,{ cors: {origin: ["https://main--canteen-fresh.netlify.app"],} });
+const io = new Server(server,{ cors: {
+    origin: 'https://main--canteen-fresh.netlify.app', // Allow this specific origin
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}});
 app.use(session({
     secret: process.env.SESSION_KEY,
     resave: false,
