@@ -313,9 +313,9 @@ app.get("/all", passport.authenticate('jwt', { session: "false" }), async (req, 
         // const [result] = await db.query("SELECT * FROM menu");
         const result = await Menu.find({});
         let data = [];
-        result.forEach(item => {
+       result.forEach(item => {
             if (item.available == true) {
-                data.push({ order_id: item._id, name: item.name, price: item.price, shop: item.shop,shop_id:item.shop_id,imageUrl : item.image });
+                data.push({ item_id: item._id, name: item.name, price: item.price, shop: item.shop,shop_id:item.shop_id,imageUrl : item.image });
             }
         });
         if(req.user.ismerchant)
@@ -512,7 +512,7 @@ app.get("/myorders",passport.authenticate('jwt', { session: "false" }), async (r
             const result = await MyOrders.find({ shop_id: merchant.id }).sort({_id: -1 });
             let data=[];
             result.forEach((item)=>{
-                data.push({order_id:item.order_id , item_id:item.item_id , first_name:item.first_name, last_name:item.last_name, enroll_id:item.enroll_id , name:item.name , price:item.price , quantity:item.quantity , payment:item.payment ,imageUrl:item.image, time:item.time , date:item.date, completed:item.completed, rejected:item.rejected});
+                data.push({order_id:item._id , item_id:item.item_id , first_name:item.first_name, last_name:item.last_name, enroll_id:item.enroll_id , name:item.name , price:item.price , quantity:item.quantity , payment:item.payment ,imageUrl:item.image, time:item.time , date:item.date, completed:item.completed, rejected:item.rejected});
             });
             res.send(data);
         } catch (error) {
@@ -526,7 +526,7 @@ app.get("/myorders",passport.authenticate('jwt', { session: "false" }), async (r
             const result = await MyOrders.find({ user_id: user._id }).sort({_id: -1 });
             let data=[];
             result.forEach((item)=>{
-                data.push({order_id:item.order_id , item_id:item.item_id , first_name:item.first_name, last_name:item.last_name, enroll_id:item.enroll_id , name:item.name , price:item.price , quantity:item.quantity ,imageUrl:item.image, payment:item.payment , time:item.time , date:item.date, completed:item.completed, rejected:item.rejected});
+                data.push({order_id:item._id , item_id:item.item_id , first_name:item.first_name, last_name:item.last_name, enroll_id:item.enroll_id , name:item.name , price:item.price , quantity:item.quantity ,imageUrl:item.image, payment:item.payment , time:item.time , date:item.date, completed:item.completed, rejected:item.rejected});
             });
             res.send(data);
         } catch (error) {
